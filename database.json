@@ -1,5 +1,28 @@
 [
   {
+    "title": "Forest",
+    "category": "Nature",
+    "device": "Mobile",
+    "author": "Nature",
+    "res": "1080x1920",
+    "size": "508.04 KB",
+    "url": "https://raw.githubusercontent.com/ITZ-FBI/lumina-wallpapers/main/images/thumb_1781536922911.jpg",
+    "tags": [
+      "nature",
+      "forest",
+      "tree",
+      "green"
+    ],
+    "colors": [
+      "#1e293b",
+      "#3b82f6",
+      "#8b5cf6"
+    ],
+    "id": 1781536922911,
+    "timestamp": 1781536922911,
+    "fullUrl": "https://raw.githubusercontent.com/ITZ-FBI/lumina-wallpapers/main/images/full_1781536922911.jpg"
+  },
+  {
     "title": "Xiomi",
     "category": "Desktop",
     "device": "Desktop",
