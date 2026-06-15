@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina | Next-Gen Wallpapers</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: {
+                            100: 'rgba(255, 255, 255, 0.1)',
+                            200: 'rgba(255, 255, 255, 0.05)',
+                            300: 'rgba(0, 0, 0, 0.2)',
+                        }
+                    },
+                    animation: {
+                        'float-slow': 'float 20s ease-in-out infinite',
+                        'float-fast': 'float 12s ease-in-out infinite reverse',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                            '50%': { transform: 'translateY(-20px) scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* --- Base & Scrollbar --- */
+        body {
+            background-color: #161618; /* Eye-comfort off-black */
+            color: #e4e4e7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #161618; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+        /* --- Ambient Background --- */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -3;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, #222225, #161618);
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            background: #ffffff;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; }
+        .orb-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; opacity: 0.1; }
+        .orb-3 { top: 30%; left: 40%; width: 40vw; height: 40vw; opacity: 0.08; }
+
+        /* --- Physics & Bouncy Animations --- */
+        :root {
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        button, .wallpaper-card, .like-btn { -webkit-tap-highlight-color: transparent; }
+        button:active, .filter-btn:active, .device-btn:active, .mobile-filter-btn:active {
+            transform: scale(0.92) !important;
+            transition: transform 0.1s ease-out !important;
+        }
+
+        /* --- Glassmorphism --- */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .glass-heavy {
+            background: rgba(22, 22, 24, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- Masonry Grid (Mobile & Desktop) --- */
+        .masonry-grid {
+            column-count: 2;
+            column-gap: 1rem;
+        }
+        @media (min-width: 640px) { .masonry-grid { column-count: 3; column-gap: 1.25rem; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 4; column-gap: 1.5rem; } }
+        @media (min-width: 1536px) { .masonry-grid { column-count: 5; column-gap: 1.5rem; } }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            position: relative;
+            transform: translateZ(0); 
+        }
+        @media (min-width: 1024px) { 
+            .masonry-item { margin-bottom: 1.5rem; }
+        }
+
+        /* --- Image Card Interactions --- */
+        .wallpaper-card {
+            transition: transform 0.6s var(--spring-bounce);
+            cursor: pointer;
+            will-change: transform;
+        }
+        .wallpaper-card:hover { transform: translateY(-8px) scale(1.02); }
+        .wallpaper-card:active {
+            transform: translateY(2px) scale(0.95);
+            transition: transform 0.15s ease-out;
+        }
+        
+        /* --- Custom UI Elements --- */
+        .search-input::placeholder { color: #a1a1aa; }
+        .search-input:focus { outline: none; border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 0 15px rgba(255, 255, 255, 0.05); }
+        
+        .filter-btn { transition: all 0.5s var(--spring-bounce); }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #3f3f46, #27272a);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* --- Modals & Toasts --- */
+        .modal-enter { opacity: 0; transform: scale(0.85) translateY(20px); }
+        .modal-enter-active {
+            opacity: 1; transform: scale(1) translateY(0);
+            transition: opacity 0.4s ease, transform 0.6s var(--spring-bounce);
+        }
+        .modal-exit { opacity: 1; transform: scale(1); }
+        .modal-exit-active {
+            opacity: 0; transform: scale(0.95) translateY(10px);
+            transition: all 0.3s ease-out;
+        }
+
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+            transform: translateY(100px) scale(0.5); opacity: 0;
+            transition: all 0.6s var(--spring-bounce);
+        }
+        .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* --- Dynamic Scroll Animations --- */
+        .animate-on-scroll {
+            opacity: 0; transform: translateY(60px) scale(0.85);
+            transition: opacity 0.5s ease-out, transform 0.8s var(--spring-bounce);
+        }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* --- Light Mode Overrides (Eye-comfort cream/paper) --- */
+        body.light-mode { background-color: #f5f4f1; color: #27272a; }
+        body.light-mode .ambient-bg { background: radial-gradient(circle at top right, #ffffff, #f5f4f1); }
+        body.light-mode .orb { background: #000000; opacity: 0.03; filter: blur(90px); }
+        
+        body.light-mode .glass { background: rgba(255, 255, 255, 0.5); border-color: rgba(0, 0, 0, 0.05); box-shadow: 0 4px 30px rgba(0,0,0,0.03); }
+        body.light-mode .glass-heavy { background: rgba(245, 244, 241, 0.95); border-color: rgba(0, 0, 0, 0.08); }
+        body.light-mode #main-header.bg-\\[\\#161618\\]\\/95 { background-color: rgba(245, 244, 241, 0.95) !important; }
+        
+        body.light-mode .text-white { color: #18181b !important; }
+        body.light-mode .text-slate-100 { color: #27272a !important; }
+        body.light-mode .text-slate-200 { color: #3f3f46 !important; }
+        body.light-mode .text-slate-300, body.light-mode .text-slate-400 { color: #52525b !important; }
+        
+        body.light-mode .card-overlay .text-white,
+        body.light-mode .card-overlay .text-slate-300,
+        body.light-mode #btn-download,
+        body.light-mode .device-btn.bg-white\\/10 .text-white,
+        body.light-mode #close-modal { color: white !important; }
+        
+        body.light-mode .search-input { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); color: #27272a !important; }
+        body.light-mode .search-input:focus { background: white; border-color: #a1a1aa; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
+        body.light-mode .filter-btn, body.light-mode .device-btn { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); color: #3f3f46; }
+        body.light-mode .filter-btn.active { background: linear-gradient(135deg, #e4e4e7, #d4d4d8); color: #18181b !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        body.light-mode .device-btn.bg-white\\/10 { background: #18181b; color: white !important; }
+        body.light-mode .like-btn.bg-red-500\\/10 { background: rgba(239, 68, 68, 0.15); }
+        body.light-mode .mobile-filter-btn.bg-white\\/10 { background: rgba(0,0,0,0.08) !important; color: #18181b !important; font-weight: 600; }
+        body.light-mode .bg-zinc-500\\/20 { background-color: rgba(0,0,0,0.1) !important; }
+
+        /* --- Theme Transition Overlay State --- */
+        .theme-transitioning { pointer-events: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-zinc-500 selection:text-white relative">
+
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="orb orb-1 animate-float-slow"></div>
+        <div class="orb orb-2 animate-float-fast"></div>
+        <div class="orb orb-3 animate-float-slow"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 w-full z-40 glass border-b-0 border-white/5 transition-all duration-300" id="main-header">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Name -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer transform transition-transform hover:scale-105 active:scale-95" onclick="window.scrollTo(0,0)">
+                    <span class="text-3xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-600 block">Lumina.</span>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-2xl mx-3 sm:mx-8">
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400 group-focus-within:text-zinc-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="search-input" class="search-input block w-full pl-11 pr-4 py-2.5 sm:py-3 border border-white/10 rounded-2xl leading-5 bg-white/5 text-slate-100 placeholder-slate-400 focus:bg-white/10 transition-all duration-300 backdrop-blur-md" placeholder="Search incredible wallpapers...">
+                        
+                        <!-- Search Clear Button -->
+                        <button id="clear-search" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden text-slate-400 hover:text-zinc-200 transition-colors">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Actions & Mobile Hamburger -->
+                <div class="flex items-center gap-2 sm:gap-4 relative">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                        <svg id="icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+
+                    <!-- Desktop Settings Dropdown -->
+                    <div class="hidden md:block relative">
+                        <button id="settings-toggle" class="w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </button>
+                        <div id="settings-menu" class="dropdown-panel absolute right-0 mt-3 w-72 glass-heavy rounded-2xl shadow-2xl p-5 hidden flex-col opacity-0 translate-y-2 transition-all duration-300 origin-top-right z-50">
+                            <h4 class="text-sm font-semibold text-slate-300 mb-4 uppercase tracking-wider">Settings</h4>
+                            <div class="flex items-center justify-between mb-2 gap-4">
+                                <span class="text-sm font-medium text-white">Momentum Scroll</span>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="momentum-toggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-zinc-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed mt-2 whitespace-normal">Enables physics-based smooth scrolling inertia. Beautiful, but intercepts native wheel behavior.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button id="mobile-menu-toggle" class="md:hidden w-10 h-10 rounded-full glass glass-hover flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+
+                    <!-- Mobile Main Menu Dropdown -->
+                    <div id="mobile-main-menu" class="dropdown-panel absolute top-full right-0 mt-3 w-64 glass-heavy rounded-2xl shadow-2xl p-4 hidden flex-col gap-2 opacity-0 translate-y-2 transition-all duration-300 origin-top-right z-50 md:hidden">
+                        <div class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                            <span class="text-sm font-medium text-slate-200 flex items-center gap-3">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Momentum Scroll
+                            </span>
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                <input type="checkbox" id="mobile-momentum-toggle" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-zinc-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Bar (Desktop Buttons / Mobile Dropdowns) -->
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3 border-t border-white/5 relative z-30">
+            <!-- Desktop Layout -->
+            <div class="hidden md:flex items-center justify-between min-w-max">
+                <div class="flex space-x-3" id="category-filters">
+                    <button class="filter-btn active px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="All">All</button>
+                    <button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="Abstract">Abstract</button>
+                    <button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="Nature">Nature</button>
+                    <button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="Space">Space</button>
+                    <button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="Technology">Technology</button>
+                    <button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="Minimal">Minimal</button>
+                </div>
+                <div class="flex items-center bg-white/5 border border-white/10 rounded-full p-1 ml-6" id="device-filters">
+                    <button class="device-btn active px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-white/10 text-white" data-device="All">Any</button>
+                    <button class="device-btn px-4 py-1.5 rounded-full text-sm font-medium transition-colors text-slate-400 hover:text-white" data-device="Desktop">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Desktop
+                    </button>
+                    <button class="device-btn px-4 py-1.5 rounded-full text-sm font-medium transition-colors text-slate-400 hover:text-white" data-device="Mobile">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        Mobile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Layout -->
+            <div class="flex md:hidden items-center gap-3 w-full">
+                <div class="relative flex-1">
+                    <button id="mobile-cat-toggle" class="w-full flex items-center justify-between glass px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-200" onclick="toggleDropdown(event, 'mobile-cat-menu')">
+                        <span id="mobile-cat-label">All Categories</span>
+                        <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-cat-menu" class="dropdown-panel absolute top-full left-0 right-0 mt-2 p-2 glass-heavy rounded-2xl flex-col gap-1 hidden shadow-2xl opacity-0 translate-y-2 transition-all duration-300 origin-top">
+                        <button class="mobile-filter-btn cat-item bg-white/10 text-white w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'All', 'All Categories')">All Categories</button>
+                        <button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'Abstract', 'Abstract')">Abstract</button>
+                        <button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'Nature', 'Nature')">Nature</button>
+                        <button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'Space', 'Space')">Space</button>
+                        <button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'Technology', 'Technology')">Technology</button>
+                        <button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', 'Minimal', 'Minimal')">Minimal</button>
+                    </div>
+                </div>
+
+                <div class="relative flex-1">
+                    <button id="mobile-dev-toggle" class="w-full flex items-center justify-between glass px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-200" onclick="toggleDropdown(event, 'mobile-dev-menu')">
+                        <span id="mobile-dev-label">Any Device</span>
+                        <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="mobile-dev-menu" class="dropdown-panel absolute top-full left-0 right-0 mt-2 p-2 glass-heavy rounded-2xl flex-col gap-1 hidden shadow-2xl opacity-0 translate-y-2 transition-all duration-300 origin-top">
+                        <button class="mobile-filter-btn dev-item bg-white/10 text-white w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('device', 'All', 'Any Device')">Any Device</button>
+                        <button class="mobile-filter-btn dev-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('device', 'Desktop', 'Desktop')">Desktop</button>
+                        <button class="mobile-filter-btn dev-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('device', 'Mobile', 'Mobile')">Mobile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-[180px] pb-24 min-h-screen">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Dynamic State Header -->
+            <div id="results-header" class="mb-8 mt-4 hidden">
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    <span id="results-title">Search Results</span>
+                    <span id="results-count" class="text-sm font-normal px-3 py-1 bg-zinc-500/20 text-zinc-300 rounded-full"></span>
+                </h2>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div id="gallery" class="masonry-grid">
+                <!-- Wallpapers injected here via JS -->
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-indicator" class="flex justify-center items-center py-12 hidden">
+                <svg class="animate-spin h-10 w-10 text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden flex-col items-center justify-center py-32 text-center">
+                <div class="w-24 h-24 mb-6 rounded-2xl glass flex items-center justify-center text-slate-400 shadow-xl overflow-hidden border border-white/10">
+                    <img src="logo.png" alt="Lumina Logo" class="w-full h-full object-cover opacity-50 grayscale">
+                </div>
+                <h3 class="text-2xl font-bold mb-2">No Wallpapers Found</h3>
+                <p class="text-slate-400 max-w-md">Try adjusting your filters or search terms to find what you're looking for.</p>
+                <button onclick="resetFilters()" class="mt-6 px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium transition-colors">Reset Everything</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Detailed View Modal -->
+    <div id="wallpaper-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 lg:p-12">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer" id="modal-backdrop"></div>
+        <div class="relative w-full max-w-7xl max-h-full glass-heavy rounded-3xl overflow-hidden flex flex-col lg:flex-row shadow-2xl modal-enter" id="modal-content">
+            
+            <button id="close-modal" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white flex items-center justify-center transition-colors backdrop-blur-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="w-full lg:w-2/3 h-[50vh] lg:h-[85vh] bg-black/40 flex items-center justify-center relative group">
+                <div id="modal-image-loader" class="absolute inset-0 skeleton"></div>
+                <img id="modal-image" src="" alt="Wallpaper full view" class="max-w-full max-h-full object-contain opacity-0 transition-opacity duration-500 relative z-10" onload="this.style.opacity=1; document.getElementById('modal-image-loader').style.display='none';">
+            </div>
+
+            <div class="w-full lg:w-1/3 p-6 lg:p-10 flex flex-col h-auto lg:h-[85vh] overflow-y-auto no-scrollbar">
+                <div class="flex items-start justify-between mb-6">
+                    <div>
+                        <h2 id="modal-title" class="text-2xl sm:text-3xl font-semibold text-white mb-2 leading-tight tracking-tight">Title</h2>
+                        <div class="flex items-center gap-2 text-slate-400 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <span id="modal-author">Author Name</span>
+                        </div>
+                    </div>
+                    <button class="like-btn w-12 h-12 rounded-full glass flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-500/10 transition-all group" onclick="toggleLikeModal(this)">
+                        <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="glass p-4 rounded-2xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider mb-1">Resolution</p>
+                        <p id="modal-res" class="font-medium text-slate-200 flex items-center gap-2"></p>
+                    </div>
+                    <div class="glass p-4 rounded-2xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider mb-1">File Size</p>
+                        <p id="modal-size" class="font-medium text-slate-200 flex items-center gap-2"></p>
+                    </div>
+                    <div class="glass p-4 rounded-2xl col-span-2">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider mb-1">License</p>
+                        <p class="font-medium text-slate-200 text-sm">Free to use under Lumina Standard License.</p>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <p class="text-slate-400 text-sm mb-3 font-medium">Dominant Colors</p>
+                    <div class="flex gap-3" id="modal-colors"></div>
+                </div>
+
+                <div class="mb-auto">
+                    <p class="text-slate-400 text-sm mb-3 font-medium">Tags</p>
+                    <div class="flex flex-wrap gap-2" id="modal-tags"></div>
+                </div>
+
+                <div class="mt-8 flex flex-col gap-3">
+                    <button id="btn-download" class="w-full py-4 rounded-xl bg-gradient-to-r from-zinc-700 to-zinc-800 hover:from-zinc-600 hover:to-zinc-700 text-white font-bold text-lg shadow-lg shadow-zinc-900/30 transform hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Full Resolution
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast glass-heavy border-l-4 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+        <div id="toast-icon"></div>
+        <p id="toast-message" class="text-sm font-medium"></p>
+    </div>
+
+    <!-- Shared Database Logic -->
+    <script src="lumina_db.js"></script>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- 1. DATABASE ---
+        let database = [];
+
+        // --- 2. STATE ---
+        const state = { query: '', category: 'All', device: 'All', page: 1, itemsPerPage: 15, isLoading: false, hasMore: true };
+
+        // --- 3. DOM ELEMENTS ---
+        const els = {
+            grid: document.getElementById('gallery'),
+            searchInput: document.getElementById('search-input'),
+            clearSearch: document.getElementById('clear-search'),
+            categoryBtns: document.querySelectorAll('.filter-btn'),
+            deviceBtns: document.querySelectorAll('.device-btn'),
+            loader: document.getElementById('loading-indicator'),
+            emptyState: document.getElementById('empty-state'),
+            resultsHeader: document.getElementById('results-header'),
+            resultsTitle: document.getElementById('results-title'),
+            resultsCount: document.getElementById('results-count'),
+            modal: document.getElementById('wallpaper-modal'),
+            modalContent: document.getElementById('modal-content'),
+            modalImg: document.getElementById('modal-image'),
+            modalLoader: document.getElementById('modal-image-loader'),
+            btnDownload: document.getElementById('btn-download')
+        };
+
+        // --- 4. CORE LOGIC ---
+        function getFilteredData() {
+            return database.filter(item => {
+                const matchCategory = state.category === 'All' || item.category === state.category;
+                const matchDevice = state.device === 'All' || item.device === state.device;
+                const searchLower = state.query.toLowerCase();
+                // Enhanced search matches title, tags, category AND device
+                const matchSearch = state.query === '' || 
+                                    item.title.toLowerCase().includes(searchLower) || 
+                                    item.category.toLowerCase().includes(searchLower) ||
+                                    item.device.toLowerCase().includes(searchLower) ||
+                                    item.tags.some(tag => tag.toLowerCase().includes(searchLower));
+                
+                return matchCategory && matchDevice && matchSearch;
+            });
+        }
+
+        function createCardElement(item) {
+            const div = document.createElement('div');
+            
+            div.className = `masonry-item wallpaper-card group animate-on-scroll relative p-2 sm:p-2.5 rounded-[1.5rem] overflow-hidden`;
+            
+            div.innerHTML = `
+                <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50 scale-[1.1] blur-xl group-hover:opacity-100 group-hover:scale-[1.2] group-hover:blur-2xl transition-all duration-700 ease-out" style="background-image: url('${item.url}');"></div>
+                <div class="relative z-10 w-full h-full rounded-[1rem] overflow-hidden bg-black/40 shadow-xl transform transition-transform duration-700 ease-out">
+                    <img src="${item.url}" alt="${item.title}" loading="lazy" class="w-full h-auto transition-transform duration-700 ease-out group-hover:scale-110 min-h-[150px] bg-zinc-800">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end items-end p-4 transition-all duration-500 ease-out group-hover:opacity-0 group-hover:translate-y-4 pointer-events-none">
+                        <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[10px] uppercase tracking-widest font-semibold text-white border border-white/20 shadow-sm">${item.device}</div>
+                        <div class="w-full pl-8 text-right">
+                            <h3 class="text-white font-semibold text-sm sm:text-[15px] leading-tight shadow-black drop-shadow-md truncate w-full tracking-tight">${item.title}</h3>
+                            <p class="text-zinc-300 text-xs sm:text-sm font-medium mt-1 drop-shadow-md truncate w-full">${item.author}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            div.onclick = () => openModal(item.id);
+            return div;
+        }
+
+        async function renderGallery(reset = false) {
+            if (state.isLoading) return;
+            state.isLoading = true;
+
+            if (reset) {
+                const items = els.grid.querySelectorAll('.masonry-item');
+                if (items.length > 0) {
+                    items.forEach((item) => {
+                        item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(40px) scale(0.9)';
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 350));
+                }
+                state.page = 1;
+                els.grid.innerHTML = '';
+            }
+
+            els.loader.classList.remove('hidden');
+            els.loader.style.opacity = '0';
+            requestAnimationFrame(() => {
+                els.loader.style.transition = 'opacity 0.3s ease';
+                els.loader.style.opacity = '1';
+            });
+
+            await new Promise(resolve => setTimeout(resolve, 300)); // Network sim
+
+            const filteredData = getFilteredData();
+            const startIndex = (state.page - 1) * state.itemsPerPage;
+            const endIndex = startIndex + state.itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
+
+            updateHeaderState(filteredData.length);
+
+            els.loader.style.opacity = '0';
+            await new Promise(resolve => setTimeout(resolve, 300));
+            els.loader.classList.add('hidden');
+
+            if (pageData.length === 0 && reset) {
+                els.emptyState.classList.remove('hidden');
+                els.emptyState.style.opacity = '0';
+                els.emptyState.style.transform = 'translateY(20px)';
+                els.emptyState.style.transition = 'all 0.5s var(--spring-bounce)';
+                requestAnimationFrame(() => {
+                    els.emptyState.style.opacity = '1';
+                    els.emptyState.style.transform = 'translateY(0)';
+                });
+                els.grid.classList.add('hidden');
+            } else {
+                els.emptyState.classList.add('hidden');
+                els.grid.classList.remove('hidden');
+                
+                const fragment = document.createDocumentFragment();
+                pageData.forEach((item, index) => {
+                    const card = createCardElement(item);
+                    if (reset) card.style.transitionDelay = `${index * 40}ms`;
+                    fragment.appendChild(card);
+                });
+                els.grid.appendChild(fragment);
+            }
+
+            state.hasMore = endIndex < filteredData.length;
+            state.page++;
+            state.isLoading = false;
+            setupInfiniteScroll();
+        }
+
+        function updateHeaderState(count) {
+            if (state.query !== '' || state.category !== 'All' || state.device !== 'All') {
+                els.resultsHeader.classList.remove('hidden');
+                let title = 'Browsing';
+                if (state.query) title = `Results for "${state.query}"`;
+                else if (state.category !== 'All') title = `${state.category} Wallpapers`;
+                els.resultsTitle.textContent = title;
+                els.resultsCount.textContent = `${count} found`;
+            } else {
+                els.resultsHeader.classList.add('hidden');
+            }
+        }
+
+        // --- 5. MENUS & DROPDOWNS ---
+        function toggleDropdown(event, menuId) {
+            event.stopPropagation();
+            const menu = document.getElementById(menuId);
+            const isHidden = menu.classList.contains('hidden');
+            closeAllDropdowns();
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                void menu.offsetWidth; // reflow
+                menu.classList.remove('opacity-0', 'translate-y-2');
+                menu.classList.add('opacity-100', 'translate-y-0', 'flex');
+            }
+        }
+
+        function closeAllDropdowns() {
+            ['settings-menu', 'mobile-main-menu', 'mobile-cat-menu', 'mobile-dev-menu'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.classList.contains('hidden')) {
+                    el.classList.remove('opacity-100', 'translate-y-0');
+                    el.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => { el.classList.add('hidden'); el.classList.remove('flex'); }, 300);
+                }
+            });
+        }
+        document.addEventListener('click', closeAllDropdowns);
+
+        // --- 6. FILTER LOGIC ---
+        function setFilter(type, value, label) {
+            if (type === 'category') {
+                state.category = value;
+                updateActiveButtons(els.categoryBtns, value);
+                document.getElementById('mobile-cat-label').textContent = label;
+                updateMobileActiveButtons(document.querySelectorAll('.cat-item'), value);
+            } else {
+                state.device = value;
+                updateActiveButtons(els.deviceBtns, value, 'device');
+                document.getElementById('mobile-dev-label').textContent = label;
+                updateMobileActiveButtons(document.querySelectorAll('.dev-item'), value);
+            }
+            closeAllDropdowns();
+            renderGallery(true);
+        }
+
+        function resetFilters() {
+            state.query = '';
+            els.searchInput.value = '';
+            els.clearSearch.classList.add('hidden');
+            setFilter('category', 'All', 'All Categories');
+            setFilter('device', 'All', 'Any Device');
+        }
+
+        function updateActiveButtons(nodeList, activeValue, type = 'active') {
+            nodeList.forEach(b => {
+                if(type === 'active') {
+                    b.classList.remove('active');
+                    if (b.dataset.filter === activeValue) b.classList.add('active');
+                } else {
+                    b.classList.remove('bg-white/10', 'text-white', 'border-white/20');
+                    b.classList.add('text-slate-400');
+                    if (b.dataset.device === activeValue) {
+                        b.classList.remove('text-slate-400');
+                        b.classList.add('bg-white/10', 'text-white');
+                    }
+                }
+            });
+        }
+        
+        function updateMobileActiveButtons(nodeList, activeValue) {
+            nodeList.forEach(b => {
+                const isMatch = b.textContent.includes(activeValue) || (activeValue === 'All' && b.textContent.includes('All'));
+                if(isMatch) {
+                    b.classList.remove('text-slate-400', 'hover:bg-white/5');
+                    b.classList.add('bg-white/10', 'text-white');
+                } else {
+                    b.classList.add('text-slate-400', 'hover:bg-white/5');
+                    b.classList.remove('bg-white/10', 'text-white');
+                }
+            });
+        }
+
+        els.categoryBtns.forEach(b => b.addEventListener('click', (e) => setFilter('category', e.target.dataset.filter, e.target.textContent)));
+        els.deviceBtns.forEach(b => b.addEventListener('click', (e) => {
+            const target = e.target.closest('.device-btn');
+            setFilter('device', target.dataset.device, target.textContent.trim());
+        }));
+
+        // --- 7. MODAL ---
+        function openModal(id) {
+            const item = database.find(w => w.id === id);
+            if (!item) return;
+
+            els.modalImg.style.opacity = '0';
+            els.modalImg.src = '';
+            els.modalLoader.style.display = 'block';
+            
+            setTimeout(() => { els.modalImg.src = item.fullUrl; }, 100); 
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-author').textContent = item.author;
+            document.getElementById('modal-res').innerHTML = `<svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg> ${item.res}`;
+            document.getElementById('modal-size').innerHTML = `<svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg> ${item.size}`;
+            
+            document.getElementById('modal-tags').innerHTML = item.tags.map(tag => `<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-slate-300 hover:bg-white/10 hover:text-white cursor-pointer transition-colors" onclick="handleTagClick('${tag}')">#${tag}</span>`).join('');
+            document.getElementById('modal-colors').innerHTML = item.colors.map(color => `<div class="w-8 h-8 rounded-full border-2 border-white/20 shadow-md cursor-pointer transform hover:scale-110 transition-transform" style="background-color: ${color}" onclick="showToast('Color ${color} copied!', 'info')"></div>`).join('');
+
+            els.btnDownload.onclick = () => {
+                showToast(`Downloading ${item.title}...`, 'success');
+                const original = els.btnDownload.innerHTML;
+                els.btnDownload.innerHTML = `<svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+                setTimeout(() => {
+                    els.btnDownload.innerHTML = original;
+                    const a = document.createElement('a');
+                    a.href = item.fullUrl; a.target = '_blank'; a.download = `${item.title.replace(/\s+/g, '-').toLowerCase()}.jpg`;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                }, 1500);
+            };
+
+            els.modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                els.modalContent.classList.remove('modal-exit-active', 'modal-enter');
+                els.modalContent.classList.add('modal-enter-active');
+            });
+        }
+
+        function closeModal() {
+            els.modalContent.classList.remove('modal-enter-active');
+            els.modalContent.classList.add('modal-exit-active');
+            setTimeout(() => {
+                els.modal.classList.add('hidden');
+                document.body.style.overflow = '';
+                els.modalContent.classList.remove('modal-exit-active');
+                els.modalContent.classList.add('modal-enter');
+            }, 300);
+        }
+
+        function handleTagClick(tag) {
+            closeModal();
+            els.searchInput.value = tag;
+            state.query = tag;
+            els.clearSearch.classList.remove('hidden');
+            renderGallery(true);
+        }
+
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !els.modal.classList.contains('hidden')) closeModal(); });
+
+        // --- 8. SEARCH & UTILS ---
+        let searchTimeout;
+        els.searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const val = e.target.value.trim();
+            els.clearSearch.classList.toggle('hidden', val.length === 0);
+            searchTimeout = setTimeout(() => { state.query = val; renderGallery(true); }, 400);
+        });
+
+        els.clearSearch.addEventListener('click', () => {
+            els.searchInput.value = '';
+            state.query = '';
+            els.clearSearch.classList.add('hidden');
+            renderGallery(true);
+        });
+
+        function toggleLikeModal(btn) {
+            const svg = btn.querySelector('svg');
+            const isLiked = svg.getAttribute('fill') !== 'none';
+            if (isLiked) {
+                svg.setAttribute('fill', 'none'); btn.classList.remove('text-red-500', 'bg-red-500/10');
+            } else {
+                svg.setAttribute('fill', 'currentColor'); btn.classList.add('text-red-500', 'bg-red-500/10');
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            const icon = document.getElementById('toast-icon');
+            
+            if (type === 'success') {
+                toast.style.borderLeftColor = '#10b981';
+                icon.innerHTML = `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else {
+                toast.style.borderLeftColor = '#3b82f6';
+                icon.innerHTML = `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Header Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 20) {
+                header.classList.add('bg-[#161618]/95', 'shadow-md', 'backdrop-blur-2xl');
+                header.classList.remove('border-white/5');
+            } else {
+                header.classList.remove('bg-[#161618]/95', 'shadow-md', 'backdrop-blur-2xl');
+                header.classList.add('border-white/5');
+            }
+        });
+
+        // --- 9. ANIMATIONS & THEMES ---
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    animationObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
+
+        const observerMutation = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+                if(node.nodeType === 1 && node.classList.contains('animate-on-scroll')) {
+                    setTimeout(() => animationObserver.observe(node), 50);
+                    setTimeout(() => { if (node.style.transitionDelay) node.style.transitionDelay = ''; }, 1200);
+                }
+            }));
+        });
+        observerMutation.observe(els.grid, { childList: true });
+
+        // Hardware-Accelerated Wave Theme Toggle
+        document.getElementById('theme-toggle').addEventListener('click', (e) => {
+            if (document.body.classList.contains('theme-transitioning')) return; 
+
+            const btn = e.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            const isLight = document.body.classList.contains('light-mode');
+            const nextBg = isLight ? '#161618' : '#f5f4f1'; 
+
+            const wave = document.createElement('div');
+            wave.style.position = 'fixed';
+            wave.style.left = `${x}px`; wave.style.top = `${y}px`;
+            wave.style.width = '20px'; wave.style.height = '20px';
+            wave.style.marginTop = '-10px'; wave.style.marginLeft = '-10px';
+            wave.style.borderRadius = '50%';
+            wave.style.backgroundColor = nextBg;
+            wave.style.zIndex = '99999'; 
+            wave.style.pointerEvents = 'none';
+            wave.style.transform = 'scale(0)';
+            wave.style.transition = 'transform 0.6s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.4s ease';
+            document.body.appendChild(wave);
+
+            document.body.classList.add('theme-transitioning');
+            void wave.offsetWidth;
+
+            const maxRadius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+            const scale = (maxRadius / 10) + 2; 
+            wave.style.transform = `scale(${scale})`;
+
+            setTimeout(() => {
+                document.body.classList.toggle('light-mode');
+                document.getElementById('icon-moon').classList.toggle('hidden');
+                document.getElementById('icon-sun').classList.toggle('hidden');
+                wave.style.opacity = '0';
+                setTimeout(() => {
+                    wave.remove();
+                    document.body.classList.remove('theme-transitioning');
+                }, 400);
+            }, 600);
+        });
+
+        let observer;
+        function setupInfiniteScroll() {
+            if (observer) observer.disconnect();
+            const items = els.grid.querySelectorAll('.masonry-item');
+            if (items.length === 0 || !state.hasMore) return;
+            observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && !state.isLoading && state.hasMore) renderGallery();
+            }, { rootMargin: '200px' });
+            observer.observe(items[items.length - 1]);
+        }
+
+        // --- 10. MOMENTUM SCROLLING ---
+        document.getElementById('settings-toggle').addEventListener('click', (e) => toggleDropdown(e, 'settings-menu'));
+        document.getElementById('mobile-menu-toggle').addEventListener('click', (e) => toggleDropdown(e, 'mobile-main-menu'));
+        
+        let isMomentum = false;
+        let tScrollY = window.scrollY;
+        let cScrollY = window.scrollY;
+
+        function toggleMomentum(checked) {
+            isMomentum = checked;
+            document.getElementById('momentum-toggle').checked = checked;
+            document.getElementById('mobile-momentum-toggle').checked = checked;
+            if (isMomentum) { tScrollY = window.scrollY; cScrollY = window.scrollY; showToast('Momentum enabled', 'success'); } 
+            else showToast('Momentum disabled', 'info');
+        }
+
+        document.getElementById('momentum-toggle').addEventListener('change', (e) => toggleMomentum(e.target.checked));
+        document.getElementById('mobile-momentum-toggle').addEventListener('change', (e) => toggleMomentum(e.target.checked));
+
+        window.addEventListener('wheel', (e) => {
+            if (!isMomentum || document.body.style.overflow === 'hidden') return; 
+            e.preventDefault();
+            tScrollY += e.deltaY * 1.5; 
+            const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight) - window.innerHeight;
+            tScrollY = Math.max(0, Math.min(tScrollY, maxScroll));
+        }, { passive: false });
+
+        function momentumLoop() {
+            if (isMomentum && document.body.style.overflow !== 'hidden') {
+                const diff = tScrollY - cScrollY;
+                if (Math.abs(diff) > 0.5) {
+                    cScrollY += diff * 0.08; 
+                    window.scrollTo(0, cScrollY);
+                } else cScrollY = tScrollY;
+                if (Math.abs(window.scrollY - cScrollY) > 5) { cScrollY = window.scrollY; tScrollY = window.scrollY; }
+            } else {
+                cScrollY = window.scrollY; tScrollY = window.scrollY;
+            }
+            requestAnimationFrame(momentumLoop);
+        }
+        momentumLoop();
+
+        // Boot
+        async function bootApp() {
+            try {
+                await LuminaDB.init();
+                database = await LuminaDB.getAllWallpapers();
+                
+                // Shuffle for random placement if needed (optional since IndexedDB returns them by ID or sorted)
+                database.sort(() => Math.random() - 0.5);
+                
+                // Extract unique categories and rebuild filter buttons
+                const uniqueCategories = [...new Set(database.map(item => item.category))];
+                buildCategoryFilters(uniqueCategories);
+                
+                renderGallery(true);
+            } catch (err) {
+                console.error('Failed to init DB:', err);
+                showToast('Failed to load database', 'error');
+            }
+        }
+
+        function buildCategoryFilters(categories) {
+            const deskContainer = document.getElementById('category-filters');
+            const mobContainer = document.getElementById('mobile-cat-menu');
+            
+            // Keep the "All" buttons
+            deskContainer.innerHTML = '<button class="filter-btn active px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="All">All</button>';
+            mobContainer.innerHTML = '<button class="mobile-filter-btn cat-item bg-white/10 text-white w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter(\'category\', \'All\', \'All Categories\')">All Categories</button>';
+
+            categories.forEach(cat => {
+                deskContainer.innerHTML += `<button class="filter-btn px-5 py-1.5 rounded-full border border-white/10 bg-white/5 text-sm font-medium hover:bg-white/10" data-filter="${cat}">${cat}</button>`;
+                mobContainer.innerHTML += `<button class="mobile-filter-btn cat-item text-slate-400 w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm font-medium transition-colors" onclick="setFilter('category', '${cat}', '${cat}')">${cat}</button>`;
+            });
+
+            // Re-attach event listeners for desktop buttons
+            document.querySelectorAll('#category-filters .filter-btn').forEach(b => {
+                b.addEventListener('click', (e) => setFilter('category', e.target.dataset.filter, e.target.textContent));
+            });
+            // Update els object
+            els.categoryBtns = document.querySelectorAll('.filter-btn');
+        }
+
+        bootApp();
+    </script>
+</body>
+</html>
