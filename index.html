@@ -67,6 +67,9 @@
             overflow: hidden;
             background: #000000;
         }
+        @media (max-width: 768px) {
+            .ambient-bg { display: none !important; }
+        }
         .orb {
             position: absolute;
             border-radius: 50%;
@@ -110,9 +113,10 @@
 
         /* --- Masonry Grid (Mobile & Desktop) --- */
         .masonry-grid {
-            column-count: 2;
+            column-count: 1;
             column-gap: 0.75rem;
         }
+        @media (min-width: 480px) { .masonry-grid { column-count: 2; } }
         @media (min-width: 640px) { .masonry-grid { column-count: 3; column-gap: 1.25rem; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; column-gap: 1.5rem; } }
         @media (min-width: 1536px) { .masonry-grid { column-count: 5; column-gap: 1.5rem; } }
@@ -425,7 +429,7 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <div class="w-full lg:w-2/3 h-[50vh] lg:h-[85vh] bg-black/40 flex items-center justify-center relative group">
+            <div class="w-full lg:w-2/3 h-[65vh] lg:h-[85vh] bg-black/40 flex items-center justify-center relative group">
                 <div id="modal-image-loader" class="absolute inset-0 skeleton"></div>
                 <img id="modal-image" src="" alt="Wallpaper full view" class="max-w-full max-h-full object-contain opacity-0 transition-opacity duration-500 relative z-10" onload="this.style.opacity=1; document.getElementById('modal-image-loader').style.display='none';">
             </div>
@@ -538,7 +542,7 @@
             div.className = `masonry-item wallpaper-card group animate-on-scroll relative p-1 sm:p-2.5 rounded-[1.5rem] overflow-hidden`;
             
             div.innerHTML = `
-                <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50 scale-[1.1] blur-xl group-hover:opacity-100 group-hover:scale-[1.2] group-hover:blur-2xl transition-all duration-700 ease-out" style="background-image: url('${item.url}');"></div>
+                <div class="hidden sm:block absolute inset-0 z-0 bg-cover bg-center opacity-50 scale-[1.1] blur-xl group-hover:opacity-100 group-hover:scale-[1.2] group-hover:blur-2xl transition-all duration-700 ease-out" style="background-image: url('${item.url}');"></div>
                 <div class="relative z-10 w-full h-full rounded-[1rem] overflow-hidden bg-black/40 shadow-xl transform transition-transform duration-700 ease-out">
                     <img src="${item.url}" alt="${item.title}" loading="lazy" class="w-full h-auto transition-transform duration-700 ease-out group-hover:scale-110 min-h-[150px] bg-zinc-800">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end items-end p-4 transition-all duration-500 ease-out group-hover:opacity-0 group-hover:translate-y-4 pointer-events-none">
