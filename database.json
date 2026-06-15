@@ -1,28 +1,5 @@
 [
   {
-    "id": 1,
-    "title": "Neon Cyber City",
-    "category": "Technology",
-    "device": "Desktop",
-    "author": "Alex Chen",
-    "res": "3840x2160",
-    "size": "3.8 MB",
-    "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    "fullUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=100",
-    "tags": [
-      "cyberpunk",
-      "city",
-      "neon",
-      "dark"
-    ],
-    "colors": [
-      "#0f172a",
-      "#8b5cf6",
-      "#ec4899"
-    ],
-    "timestamp": 1781513724817
-  },
-  {
     "id": 2,
     "title": "Deep Space Nebula",
     "category": "Space",
