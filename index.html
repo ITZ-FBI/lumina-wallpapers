@@ -425,41 +425,9 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
 
-            <div class="w-full lg:w-2/3 h-[50vh] lg:h-[85vh] bg-black/40 flex items-center justify-center relative group p-4 sm:p-8">
-                <div id="modal-image-loader" class="absolute inset-0 skeleton z-0"></div>
-                
-                <!-- Hugging Wrapper -->
-                <div id="mock-device-container" class="relative overflow-hidden opacity-0 transition-all duration-500 z-10 flex shadow-2xl ring-1 ring-white/10">
-                    <img id="modal-image" src="" alt="Wallpaper full view" class="max-w-full max-h-[calc(50vh-2rem)] lg:max-h-[calc(85vh-4rem)] object-contain block relative z-10" onload="document.getElementById('mock-device-container').style.opacity=1; document.getElementById('modal-image-loader').style.display='none';">
-                    
-                    <!-- Desktop Mock UI -->
-                    <div id="mock-desktop-ui" class="absolute inset-x-0 bottom-0 z-20 hidden">
-                        <div class="w-full h-10 sm:h-12 bg-white/20 backdrop-blur-xl border-t border-white/20 flex items-center justify-center gap-3 sm:gap-6 px-4">
-                            <!-- Windows-style icons -->
-                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded bg-blue-500/90 shadow-md"></div>
-                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded bg-yellow-400/90 shadow-md"></div>
-                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded bg-emerald-500/90 shadow-md"></div>
-                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded bg-red-400/90 shadow-md"></div>
-                        </div>
-                    </div>
-
-                    <!-- Mobile Mock UI -->
-                    <div id="mock-mobile-ui" class="absolute inset-0 z-20 hidden flex-col justify-between pointer-events-none p-2 sm:p-4">
-                        <!-- Dynamic Island / Notch -->
-                        <div class="w-full flex justify-center mt-1 sm:mt-2">
-                            <div class="w-20 sm:w-28 h-5 sm:h-7 bg-black rounded-full shadow-lg border border-white/10"></div>
-                        </div>
-                        <!-- iOS Dock -->
-                        <div class="w-full flex justify-center mb-1 sm:mb-2">
-                            <div class="w-[90%] h-14 sm:h-20 bg-white/20 backdrop-blur-2xl rounded-[1.5rem] sm:rounded-[2rem] border border-white/20 flex items-center justify-around px-3 sm:px-5 shadow-xl">
-                                <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-green-500/90 shadow-sm"></div>
-                                <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-400/90 shadow-sm"></div>
-                                <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-red-400/90 shadow-sm"></div>
-                                <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-zinc-800/90 shadow-sm"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="w-full lg:w-2/3 h-[50vh] lg:h-[85vh] bg-black/40 flex items-center justify-center relative group">
+                <div id="modal-image-loader" class="absolute inset-0 skeleton"></div>
+                <img id="modal-image" src="" alt="Wallpaper full view" class="max-w-full max-h-full object-contain opacity-0 transition-opacity duration-500 relative z-10" onload="this.style.opacity=1; document.getElementById('modal-image-loader').style.display='none';">
             </div>
 
             <div class="w-full lg:w-1/3 p-6 lg:p-10 flex flex-col h-auto lg:h-[85vh] overflow-y-auto no-scrollbar">
@@ -766,37 +734,12 @@
             const item = database.find(w => w.id === id);
             if (!item) return;
 
+            els.modalImg.style.opacity = '0';
             els.modalImg.src = '';
             els.modalLoader.style.display = 'block';
             
-            // Reset Mock UI
-            const mockDesktop = document.getElementById('mock-desktop-ui');
-            const mockMobile = document.getElementById('mock-mobile-ui');
-            const mockContainer = document.getElementById('mock-device-container');
-            mockDesktop.classList.add('hidden');
-            mockMobile.classList.add('hidden');
-            mockMobile.classList.remove('flex');
-            mockContainer.style.opacity = '0';
-
             // Fast loading: Show the thumbnail (url) in the modal first!
-            setTimeout(() => { 
-                els.modalImg.src = item.url; 
-                if (item.device === 'Mobile') {
-                    els.modalImg.classList.remove('rounded-xl');
-                    els.modalImg.classList.add('rounded-[2.5rem]');
-                    mockContainer.classList.add('rounded-[2.5rem]');
-                    mockMobile.classList.remove('hidden');
-                    mockMobile.classList.add('flex');
-                } else if (item.device === 'Desktop') {
-                    els.modalImg.classList.remove('rounded-[2.5rem]');
-                    mockContainer.classList.remove('rounded-[2.5rem]');
-                    els.modalImg.classList.add('rounded-xl');
-                    mockDesktop.classList.remove('hidden');
-                } else {
-                    els.modalImg.classList.remove('rounded-[2.5rem]', 'rounded-xl');
-                    mockContainer.classList.remove('rounded-[2.5rem]');
-                }
-            }, 100);  
+            setTimeout(() => { els.modalImg.src = item.url; }, 100); 
             document.getElementById('modal-title').textContent = item.title;
             document.getElementById('modal-author').textContent = item.author;
             document.getElementById('modal-res').innerHTML = `<svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg> ${item.res}`;
