@@ -1,5 +1,26 @@
 [
   {
+    "title": "Xiomi",
+    "category": "Desktop",
+    "device": "Desktop",
+    "author": "Xiomi",
+    "res": "5120x2880",
+    "size": "2.75 MB",
+    "url": "https://raw.githubusercontent.com/ITZ-FBI/lumina-wallpapers/main/images/thumb_1781514877926.jpg",
+    "tags": [
+      "desktop",
+      "xiomi"
+    ],
+    "colors": [
+      "#1e293b",
+      "#3b82f6",
+      "#8b5cf6"
+    ],
+    "id": 1781514877926,
+    "timestamp": 1781514877926,
+    "fullUrl": "https://raw.githubusercontent.com/ITZ-FBI/lumina-wallpapers/main/images/full_1781514877926.jpg"
+  },
+  {
     "title": "BMW-M4 GT3",
     "category": "Car",
     "device": "Desktop",
