@@ -1,0 +1,71 @@
+[
+  {
+    "id": 1,
+    "title": "Neon Cyber City",
+    "category": "Technology",
+    "device": "Desktop",
+    "author": "Alex Chen",
+    "res": "3840x2160",
+    "size": "3.8 MB",
+    "url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "fullUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2000&q=100",
+    "tags": [
+      "cyberpunk",
+      "city",
+      "neon",
+      "dark"
+    ],
+    "colors": [
+      "#0f172a",
+      "#8b5cf6",
+      "#ec4899"
+    ],
+    "timestamp": 1781513724817
+  },
+  {
+    "id": 2,
+    "title": "Deep Space Nebula",
+    "category": "Space",
+    "device": "Desktop",
+    "author": "NASA",
+    "res": "5120x2880",
+    "size": "8.1 MB",
+    "url": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80",
+    "fullUrl": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=2000&q=100",
+    "tags": [
+      "stars",
+      "galaxy",
+      "purple",
+      "cosmos"
+    ],
+    "colors": [
+      "#000000",
+      "#4c1d95",
+      "#1e3a8a"
+    ],
+    "timestamp": 1781513723817
+  },
+  {
+    "id": 3,
+    "title": "Minimalist Geometry",
+    "category": "Minimal",
+    "device": "Mobile",
+    "author": "Sarah Lee",
+    "res": "1440x3200",
+    "size": "1.2 MB",
+    "url": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&h=1200&q=80",
+    "fullUrl": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1440&h=3200&q=100",
+    "tags": [
+      "abstract",
+      "shapes",
+      "clean",
+      "white"
+    ],
+    "colors": [
+      "#ffffff",
+      "#e2e8f0",
+      "#94a3b8"
+    ],
+    "timestamp": 1781513722817
+  }
+]
